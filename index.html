@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PackJoy 旅程無憂 ✈️ 智能旅行出發清單 | Travel Packing Checklist</title>
+  <meta name="description" content="最貼心又治癒的出國旅遊隨身必備清單！中英雙語對照、3C配件防漏提醒、隨身與託運分流、心情小語與進度激勵，讓你在出發前就擁有好心情！純靜態零伺服器，點開即用！">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+  
+  <!-- Local compiled Tailwind CSS (Works 100% offline, zero CORS, zero network delays) -->
+  <link rel="stylesheet" href="./style.css">
+  <!-- Tailwind CDN fallback -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @keyframes floatPlane {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(3deg); }
+    }
+    .floating-plane {
+      display: inline-block;
+      animation: floatPlane 3.2s ease-in-out infinite;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+      .print-break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
+      .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-amber-200 selection:text-amber-900 font-sans min-h-screen flex flex-col">
+
+  <!-- Printable Header (Visible only when printing) -->
+  <div class="hidden print:block p-6 border-b-2 border-slate-900 mb-6">
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-2xl font-black text-slate-900">✈️ PackJoy 旅程無憂 — 出發行李檢查清單</h1>
+        <p class="text-xs text-slate-600 mt-1 font-medium">Travel Packing Reminder Checklist (Bilingual Edition)</p>
+      </div>
+      <div class="text-right text-xs font-semibold text-slate-700 space-y-1">
+        <div id="printDestInfo">目的地: 未指定</div>
+        <div id="printDateInfo">出發日: 未指定</div>
+        <div id="printProgressInfo">進度: 0 件已完成</div>
+      </div>
+    </div>
+    <div class="mt-3 p-2 bg-slate-100 rounded text-[11px] text-slate-700 flex justify-between">
+      <span>⚠️ 必記守則：行動電源與備用鋰電池必須隨身手提，嚴禁放入託運行李！</span>
+      <span>隨身液體單瓶 ≤ 100ml，放入 1L 透明密封袋</span>
+    </div>
+  </div>
+
+  <!-- Sticky Navbar -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+          <svg class="w-5 h-5 transform -rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-slate-900 text-lg tracking-tight">PackJoy</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">旅程無憂</span>
+          </div>
+          <p class="text-[11px] text-slate-500 hidden sm:block">智能旅行出發清單・雙語對照・免伺服器點開即用</p>
+        </div>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        
+        <!-- Language Switcher -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 text-xs font-semibold">
+          <button id="btnLangDual" onclick="setLanguageMode('dual')" class="px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 bg-white text-slate-900 shadow-xs" title="中英雙語對照">
+            <svg class="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>雙語</span>
+          </button>
+          <button id="btnLangZh" onclick="setLanguageMode('zh')" class="px-2.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900" title="繁體中文為主">
+            繁中
+          </button>
+          <button id="btnLangEn" onclick="setLanguageMode('en')" class="px-2.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900" title="English Primary">
+            EN
+          </button>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="btnToggleSound" onclick="toggleSound()" class="p-2 rounded-xl border bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100 transition-colors" title="音效開關 (Sound toggle)">
+          <span id="soundIconWrapper"></span>
+        </button>
+
+        <!-- Airport Rules Button -->
+        <button onclick="openModal('airportRulesModal')" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-sky-50 border border-sky-200 text-sky-700 hover:bg-sky-100 transition-colors" title="查看航空安檢須知">
+          <svg class="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          <span>機場安檢須知</span>
+        </button>
+
+        <!-- Print Button -->
+        <button onclick="window.print()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" title="列印實體紙本清單">
+          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+          <span>列印</span>
+        </button>
+
+        <!-- Share / Copy Button -->
+        <button onclick="openModal('shareModal')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors" title="複製純文字或備份">
+          <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+          <span class="hidden sm:inline">分享/備份</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button onclick="resetChecklist()" class="p-2 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors" title="全部重置為待收拾">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+
+        <!-- Add Custom Item Button -->
+        <button onclick="openModal('addItemModal')" class="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white shadow-xs shadow-amber-500/30 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          <span class="hidden sm:inline">新增項目</span>
+          <span class="sm:hidden">新增</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+    
+    <!-- Hero / Mood & Progress Header -->
+    <div id="moodHeaderContainer" class="no-print">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- 100% Celebration Banner (Hidden by default) -->
+    <div id="celebrationBanner" class="hidden relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 text-white p-6 sm:p-8 shadow-xl no-print animate-in zoom-in-95 duration-300">
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+        <div class="flex flex-col sm:flex-row items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shrink-0 shadow-lg text-3xl">
+            🎉
+          </div>
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-bold tracking-wide">
+              <span>✨ 100% 打包完成・READY FOR TAKE-OFF!</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight">太棒了！所有旅行裝備已全部打包完畢！</h2>
+            <p class="text-sm text-emerald-100 font-medium max-w-xl">
+              所有重要證件、iPhone 及充電配件、日常換洗衣物與常備藥品皆已準備就緒。放鬆心情，帶著愉悅與期待迎接美好旅程！
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+          <button onclick="fireConfetti('all-done')" class="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-xs shadow-lg active:scale-95 transition-all flex items-center gap-1.5">
+            <span>🎉 再放一次彩帶！</span>
+          </button>
+          <button onclick="document.getElementById('celebrationBanner').classList.add('hidden')" class="px-4 py-2.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white font-bold text-xs transition-colors">
+            關閉提醒
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters, Search & Tabs -->
+    <div id="filterBarContainer" class="no-print space-y-4">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Checklist Sections Grid -->
+    <div id="checklistContainer" class="space-y-6">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Airport Safety Quick Check Tips -->
+    <div class="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-2xs no-print">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h3 class="text-sm sm:text-base font-extrabold text-slate-900">出發前安檢快記・行李防呆小提醒 (Airport Safety Quick Check)</h3>
+        </div>
+        <button onclick="openModal('airportRulesModal')" class="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline">
+          查看完整規定 →
+        </button>
+      </div>
+      <div id="quickTipsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Cheerful Footer -->
+  <footer class="mt-12 border-t border-slate-200/80 bg-white py-8 text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">PackJoy 旅程無憂</span>
+        <span>•</span>
+        <span>純靜態 HTML/CSS/JS 網頁，雙擊檔案即可離線或線上流暢運行 ✈️🌸</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-medium">
+        <button onclick="restoreDefaults()" class="hover:text-rose-600 transition-colors underline">
+          還原預設清單 (Restore Defaults)
+        </button>
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex items-center gap-1 hover:text-slate-800 transition-colors">
+          <span>回頂部</span>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Add Button on Mobile -->
+  <div class="fixed bottom-6 right-6 sm:hidden z-30 no-print">
+    <button onclick="openModal('addItemModal')" class="w-14 h-14 rounded-full bg-amber-500 text-white shadow-lg shadow-amber-500/30 flex items-center justify-center active:scale-95 transition-all">
+      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+    </button>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Add Item Modal -->
+  <div id="addItemModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-gradient-to-r from-amber-50 to-orange-50">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-base">新增自訂旅行物品 (Add Item)</h3>
+            <p class="text-xs text-slate-500">加入專屬於你的特定裝備或隨身物品</p>
+          </div>
+        </div>
+        <button onclick="closeModal('addItemModal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+
+      <form onsubmit="handleFormAddItem(event)" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">繁體中文物品名稱 <span class="text-rose-500">*</span></label>
+          <input id="inputItemZh" type="text" required placeholder="例如：拍立得相機、泳帽、降噪耳塞..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">English Name (英文名稱)</label>
+          <input id="inputItemEn" type="text" placeholder="e.g. Polaroid Camera, Swim Cap, Earplugs..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">物品分類 (Category)</label>
+            <select id="selectItemCat" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-amber-400 bg-white">
+              <option value="electronics">3C 數位科技與配件</option>
+              <option value="documents">重要證件、票券與金錢</option>
+              <option value="clothing">衣物穿搭與鞋帽飾品</option>
+              <option value="toiletries">個人洗沐與保養護理</option>
+              <option value="health">隨身常備藥品與保健</option>
+              <option value="flight_comfort">航程舒適與隨身好物</option>
+              <option value="seasonal">季節特備與戶外活動</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">行李配置 (Baggage Placement)</label>
+            <select id="selectItemBag" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-amber-400 bg-white">
+              <option value="carry_on">🎒 隨身登機包 (Carry-on)</option>
+              <option value="checked">🧳 託運行李箱 (Checked)</option>
+              <option value="on_person">👜 身上小物 (On Person)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">數量 (Quantity)</label>
+            <input id="inputItemQty" type="number" min="1" max="99" value="1" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-hidden focus:ring-2 focus:ring-amber-400">
+          </div>
+          <div class="pt-5 sm:pt-4">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input id="checkItemCrucial" type="checkbox" class="w-4 h-4 rounded text-amber-500 focus:ring-amber-400">
+              <span class="text-xs font-bold text-slate-700">標記為 ★ 必備物品</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">貼心備註或提醒 (Note / Tip)</label>
+          <input id="inputItemNote" type="text" placeholder="例如：不可託運、已充電完成..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal('addItemModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100">取消</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs shadow-amber-500/30 flex items-center gap-1.5">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>確認新增 (Add Item)</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Airport Rules Modal -->
+  <div id="airportRulesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+    <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-gradient-to-r from-sky-50 to-blue-50 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-xs">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-base">國際航空安檢與行李打包須知 (Airport Baggage Rules)</h3>
+            <p class="text-xs text-slate-500">出發前自我檢查，通關快速不卡關！</p>
+          </div>
+        </div>
+        <button onclick="closeModal('airportRulesModal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+          <div class="font-bold text-amber-900 mb-1">1. 行動電源、相機備用鋰電池 (Power Banks & Spare Batteries)</div>
+          <p class="font-semibold text-rose-600">⚠️ 絕對禁止託運！必須隨身攜帶 (Must be kept in CARRY-ON only!)</p>
+          <p class="text-slate-700 mt-1">行動電源標示容量需清晰（低於 100Wh / 約 20,000mAh 可直接隨身攜帶，超過 160Wh 禁止攜帶）。無容量標示的行動電源海關將直接沒收。</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-200">
+          <div class="font-bold text-sky-900 mb-1">2. 隨身行李液體、膠狀與噴霧規範 (Liquids & Gels ≤ 100ml)</div>
+          <p class="font-semibold text-sky-800">💧 單瓶容量不得超過 100ml，並裝於 1 公升透明夾鏈袋中</p>
+          <p class="text-slate-700 mt-1">超過 100ml 的大瓶保養品、沐浴乳、洗髮精請直接放「託運行李」。</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="font-bold text-slate-900 mb-1">3. 刀剪類、修眉剪刀與指甲剪 (Blades & Scissors)</div>
+          <p class="font-semibold text-amber-700">🧳 必須放置於託運行李 (Must be placed in CHECKED baggage)</p>
+          <p class="text-slate-700 mt-1">手動刀片、指甲剪、修眉剪刀等銳利物品，嚴禁隨身攜帶登機，以免在海關安檢點被強制丟棄。</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200">
+          <div class="font-bold text-rose-900 mb-1">4. 肉製品與生鮮農產品防範 (No Meat Products)</div>
+          <p class="font-semibold text-rose-700">🚫 嚴禁私帶未申報肉製品入境 (Strictly Prohibited without Declaration)</p>
+          <p class="text-slate-700 mt-1">各國對肉乾、火腿、真空肉類、新鮮水果管制極為嚴格，違規最高可處高額罰款。有疑慮請主動走海關申報櫃檯詢問。</p>
+        </div>
+      </div>
+      <div class="p-4 border-t border-slate-100 flex justify-end shrink-0 bg-slate-50">
+        <button onclick="closeModal('airportRulesModal')" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white">了解並關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share & Backup Modal -->
+  <div id="shareModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+    <div class="w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-gradient-to-r from-amber-50 to-orange-50 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-base">分享與備份清單 (Share & Backup)</h3>
+            <p class="text-xs text-slate-500">可複製至 LINE、備忘錄，或下載備份檔案</p>
+          </div>
+        </div>
+        <button onclick="closeModal('shareModal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-5 text-xs sm:text-sm">
+        <!-- Copy Text -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-slate-800">📋 複製純文字清單 (傳給旅伴或備忘錄)</div>
+            <button id="btnCopyText" onclick="copyChecklistText()" class="px-3 py-1.5 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-600 text-white flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span id="copyBtnLabel">一鍵複製</span>
+            </button>
+          </div>
+          <textarea id="textChecklistSummary" readonly rows="5" class="w-full p-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-600 font-mono leading-relaxed resize-none focus:outline-hidden"></textarea>
+        </div>
+        <!-- Export JSON -->
+        <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 flex items-center justify-between gap-3">
+          <div>
+            <div class="font-bold text-indigo-950">💾 下載 JSON 備份檔 (Export File)</div>
+            <p class="text-xs text-indigo-700/80 mt-0.5">將目前的清單與打包勾選進度下載為檔案儲存</p>
+          </div>
+          <button onclick="exportJsonFile()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shrink-0">下載備份</button>
+        </div>
+        <!-- Import JSON -->
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+          <div class="font-bold text-slate-800">📂 匯入 JSON 備份檔 (Restore Backup)</div>
+          <textarea id="inputImportJson" rows="2" placeholder="貼上先前的 JSON 備份文字..." class="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-mono text-slate-700 resize-none focus:outline-hidden focus:ring-2 focus:ring-amber-400"></textarea>
+          <div class="flex justify-end">
+            <button onclick="importJsonFile()" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-900 text-white">確認匯入並取代</button>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-slate-100 flex justify-end shrink-0 bg-slate-50">
+        <button onclick="closeModal('shareModal')" class="px-5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas for Confetti -->
+  <canvas id="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 w-full h-full" style="display:none;"></canvas>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // --- 1. DATA DEFINITIONS ---
+    const CATEGORIES = [
+      {
+        id: 'electronics',
+        nameZh: '3C 數位科技與配件',
+        nameEn: '3C Electronics & Gadgets',
+        icon: 'smartphone',
+        color: 'text-indigo-600',
+        bgLight: 'bg-indigo-50/80',
+        borderLight: 'border-indigo-100',
+        descriptionZh: '手機、手錶、耳機、充電器與行動電源等數位神器',
+        descriptionEn: 'Smartphones, watches, earphones, chargers & power banks'
+      },
+      {
+        id: 'documents',
+        nameZh: '重要證件、票券與金錢',
+        nameEn: 'Documents, IDs & Finance',
+        icon: 'file-check',
+        color: 'text-emerald-600',
+        bgLight: 'bg-emerald-50/80',
+        borderLight: 'border-emerald-100',
+        descriptionZh: '護照、簽證、信用卡、外幣現金與預訂憑證',
+        descriptionEn: 'Passport, visa, credit cards, cash & booking vouchers'
+      },
+      {
+        id: 'clothing',
+        nameZh: '衣物穿搭與鞋帽飾品',
+        nameEn: 'Clothing, Shoes & Apparel',
+        icon: 'shirt',
+        color: 'text-amber-600',
+        bgLight: 'bg-amber-50/80',
+        borderLight: 'border-amber-100',
+        descriptionZh: '換洗衣物、舒適鞋履、保暖外套與隨身配件',
+        descriptionEn: 'Daily outfits, comfy shoes, jackets & fashion accessories'
+      },
+      {
+        id: 'toiletries',
+        nameZh: '個人洗沐與保養護理',
+        nameEn: 'Toiletries & Personal Care',
+        icon: 'sparkles',
+        color: 'text-cyan-600',
+        bgLight: 'bg-cyan-50/80',
+        borderLight: 'border-cyan-100',
+        descriptionZh: '牙刷牙膏、洗沐分裝瓶、保濕保養與防曬',
+        descriptionEn: 'Toothbrush, travel toiletries, skincare & sun protection'
+      },
+      {
+        id: 'health',
+        nameZh: '隨身常備藥品與保健',
+        nameEn: 'Medicine & Health Kit',
+        icon: 'heart-pulse',
+        color: 'text-rose-600',
+        bgLight: 'bg-rose-50/80',
+        borderLight: 'border-rose-100',
+        descriptionZh: '暈車藥、止痛退燒、腸胃藥、OK繃與處方藥',
+        descriptionEn: 'Motion sickness pills, painkillers, stomach meds & first aid'
+      },
+      {
+        id: 'flight_comfort',
+        nameZh: '航程舒適與隨身好物',
+        nameEn: 'Flight Comfort & Bag Gear',
+        icon: 'plane',
+        color: 'text-sky-600',
+        bgLight: 'bg-sky-50/80',
+        borderLight: 'border-sky-100',
+        descriptionZh: '頸枕、眼罩耳塞、填寫入境卡原子筆與行李秤',
+        descriptionEn: 'Neck pillow, eye mask, immigration card pen & luggage scale'
+      },
+      {
+        id: 'seasonal',
+        nameZh: '季節特備與戶外活動',
+        nameEn: 'Seasonal & Outdoor Add-ons',
+        icon: 'compass',
+        color: 'text-violet-600',
+        bgLight: 'bg-violet-50/80',
+        borderLight: 'border-violet-100',
+        descriptionZh: '暖暖包、發熱衣、泳衣沙灘巾、防水袋與腳架',
+        descriptionEn: 'Hand warmers, thermal base layers, swimwear & tripods'
+      }
+    ];
+
+    const DEFAULT_ITEMS = [
+      // 3C & Electronics (Featuring user's specific items!)
+      { id: 'elec-iphone', nameZh: 'iPhone 智慧型手機', nameEn: 'iPhone / Smartphone', category: 'electronics', baggage: 'on_person', packed: false, quantity: 1, noteZh: '出國前確認已開通漫遊或下載好 eSIM / 離線地圖', noteEn: 'Check roaming or download eSIM & offline Google Maps', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-iphone-cable', nameZh: 'iPhone 充電線 (Lightning / Type-C)', nameEn: 'iPhone Charging Cable', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '建議帶 1~2 條，一條隨身一條放飯店備用', noteEn: 'Keep 1 in backpack and 1 at hotel room', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-iphone-adapter', nameZh: 'iPhone 充電頭 / 豆腐頭 / 快充頭', nameEn: 'iPhone Wall Charger / Adapter Plug', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '建議支援 PD 快充或具備多孔輸出 (USB-C & USB-A)', noteEn: 'Prefer multi-port GaN charger (USB-C & USB-A)', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-apple-watch', nameZh: 'Apple Watch / 智慧手錶', nameEn: 'Apple Watch / Smartwatch', category: 'electronics', baggage: 'on_person', packed: false, quantity: 1, noteZh: '掌握航班提醒、活動步數與即時通知', noteEn: 'Track flights, boarding gate changes & daily walking steps', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-apple-watch-charger', nameZh: 'Apple Watch 專用磁吸充電線', nameEn: 'Apple Watch Magnetic Charging Cable', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '手錶專用規格，極容易出發忘記帶！', noteEn: 'Proprietary connector - frequently forgotten!', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-airpods', nameZh: 'AirPods / 降噪無線藍牙耳機', nameEn: 'AirPods / Noise-Canceling Earbuds', category: 'electronics', baggage: 'on_person', packed: false, quantity: 1, noteZh: '飛機引擎噪音救星，飛行途中聽音樂與看影集必備', noteEn: 'Lifesaver for flight cabin engine noise', isCrucial: true, trips: ['weekend', 'vacation', 'business'] },
+      { id: 'elec-power-bank', nameZh: '行動電源 (隨身攜帶・嚴禁託運！)', nameEn: 'Power Bank / Portable Charger (Must Carry-On!)', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '⚠️ 民航法規強制規定：行動電源絕對不能託運！標示需清晰', noteEn: '⚠️ Mandatory rule: NEVER put power banks in checked bags!', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'elec-universal-adapter', nameZh: '萬國通用轉接插頭 (各國插座轉換)', nameEn: 'Universal Travel Power Adapter', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '確認目的地插座規格 (美規、歐規雙圓、英規三腳、澳規八字)', noteEn: 'Check destination plug type (US, UK, EU, AU plugs)', isCrucial: true, trips: ['vacation', 'business'] },
+      { id: 'elec-ipad-tablet', nameZh: 'iPad / 平板電腦與保護套', nameEn: 'iPad / Tablet & Folio Case', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '可在機上下載離線 Netflix / Disney+ 電影或電子書', noteEn: 'Download offline Netflix movies and flight reading books', trips: ['vacation', 'business'] },
+      { id: 'elec-laptop', nameZh: '筆記型電腦與專用充電變壓器', nameEn: 'Laptop & Charger', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '安檢時可能需要自包內取出獨立過 X 光機', noteEn: 'May need to be taken out during airport security screening', trips: ['business'] },
+      { id: 'elec-sim-pin', nameZh: '出國 SIM 卡 / 退卡針與收納夾', nameEn: 'Travel SIM Card & Ejector Pin', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '換卡後記得把原本台灣的 SIM 卡收納妥當避免遺失', noteEn: 'Keep native home SIM safely stored in plastic holder', trips: ['vacation', 'business'] },
+      { id: 'elec-camera', nameZh: '相機、備用電池與大容量記憶卡', nameEn: 'Camera, Extra Batteries & SD Cards', category: 'electronics', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '所有相機鋰電池需隨身；出發前格式化並確認記憶卡空間', noteEn: 'Spare camera batteries must be carried on; format SD cards', trips: ['vacation', 'outdoor'] },
+
+      // Documents & Finance
+      { id: 'doc-passport', nameZh: '護照 (效期需 6 個月以上)', nameEn: 'Passport (Valid for > 6 Months)', category: 'documents', baggage: 'on_person', packed: false, quantity: 1, noteZh: '翻開照片頁檢查效期；建議手機拍照備份與雲端存檔', noteEn: 'Check expiration date; save digital photocopy to cloud', isCrucial: true, trips: ['vacation', 'business', 'weekend'] },
+      { id: 'doc-visa', nameZh: '入境簽證 / 電子簽證 / ESTA / 入境卡', nameEn: 'Visa / EVisa / ESTA / Entry Approvals', category: 'documents', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '確認目的地入境規定，列印紙本一份備查更安心', noteEn: 'Print physical copy just in case phone battery dies', isCrucial: true, trips: ['vacation', 'business'] },
+      { id: 'doc-tickets', nameZh: '機票 / 電子機票憑證 / 登機證 QR Code', nameEn: 'Flight E-Tickets & Boarding Pass', category: 'documents', baggage: 'on_person', packed: false, quantity: 1, noteZh: '可加入 Apple Wallet 或截圖以防機場網路斷線', noteEn: 'Add to Apple Wallet or save offline screenshot', isCrucial: true, trips: ['vacation', 'business', 'weekend'] },
+      { id: 'doc-hotel', nameZh: '飯店訂房確認單與景點交通預約單', nameEn: 'Hotel & Transport Booking Confirmations', category: 'documents', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '海關問起住宿地址時方便出示；含飯店電話與地圖', noteEn: 'Useful when immigration asks for your lodging address', trips: ['vacation', 'business'] },
+      { id: 'doc-cash', nameZh: '外幣現鈔與當地小額零錢', nameEn: 'Foreign Currency Cash & Local Cash', category: 'documents', baggage: 'on_person', packed: false, quantity: 1, noteZh: '現金分散放置在皮夾與暗袋，不要全部放在同一個地方', noteEn: 'Split cash between wallet and secure inner bag', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'doc-cards', nameZh: '海外回饋信用卡 / 提款卡 (已開通海外提款)', nameEn: 'Credit Cards & Overseas ATM Debit Card', category: 'documents', baggage: 'on_person', packed: false, quantity: 2, noteZh: '建議帶 2 張不同發卡組織 (Visa / Mastercard)；開啟海外刷卡功能', noteEn: 'Bring both Visa and Mastercard; ensure overseas use enabled', isCrucial: true, trips: ['weekend', 'vacation', 'business'] },
+      { id: 'doc-insurance', nameZh: '海外旅行平安險與旅遊不便險保單', nameEn: 'Travel Insurance Policy Document', category: 'documents', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '記下海外緊急救助專線電話號碼與保單號碼', noteEn: 'Note down 24/7 international emergency assistance hotline', trips: ['vacation', 'business'] },
+      { id: 'doc-id-driver', nameZh: '身分證 / 駕照 / 國際駕照', nameEn: 'National ID / Driver License / Int\'l Permit', category: 'documents', baggage: 'on_person', packed: false, quantity: 1, noteZh: '若有在當地自駕租車計畫，務必帶本國駕照正本與國際駕照', noteEn: 'Original driving license + IDP required for overseas car rental', trips: ['vacation', 'weekend'] },
+
+      // Clothing & Shoes
+      { id: 'cloth-tops', nameZh: '日常休閒上衣 / T-Shirt / 襯衫', nameEn: 'Casual Tops / T-Shirts / Shirts', category: 'clothing', baggage: 'checked', packed: false, quantity: 4, noteZh: '挑選不易皺、好清洗、快乾材質', noteEn: 'Breathable, wrinkle-resistant and easy-dry fabrics', trips: ['weekend', 'vacation', 'business'] },
+      { id: 'cloth-bottoms', nameZh: '舒適長短褲 / 休閒牛仔褲', nameEn: 'Pants / Trousers / Jeans / Shorts', category: 'clothing', baggage: 'checked', packed: false, quantity: 3, noteZh: '好活動、有彈性的版型，搭機或長途拉車更舒適', noteEn: 'Stretchy and versatile for all-day exploring', trips: ['weekend', 'vacation', 'business'] },
+      { id: 'cloth-underwear', nameZh: '貼身換洗內衣褲 (或免洗紙內褲)', nameEn: 'Underwear / Undergarments (or Disposable)', category: 'clothing', baggage: 'checked', packed: false, quantity: 5, noteZh: '多備 1~2 套預防天數延長或天氣變化', noteEn: 'Pack 1-2 extra sets for unexpected delays', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'cloth-socks', nameZh: '舒適排汗襪子 / 步行厚底襪', nameEn: 'Socks / Walking Cushion Socks', category: 'clothing', baggage: 'checked', packed: false, quantity: 5, noteZh: '出國走 20,000 步必備好襪減緩足底壓力', noteEn: 'Essential for high daily walking step counts', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'cloth-jacket', nameZh: '防風輕便外套 / 機艙保暖連帽外套', nameEn: 'Light Windbreaker / Flight Warm Jacket', category: 'clothing', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '機艙內通常偏冷，隨身攜帶方便隨時穿脫', noteEn: 'Airplane cabins are chilly; keep it in your cabin bag', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'cloth-pajamas', nameZh: '睡衣 / 舒適客房家居服', nameEn: 'Sleepwear / Pajamas / Lounge Wear', category: 'clothing', baggage: 'checked', packed: false, quantity: 1, noteZh: '並非所有飯店都會提供睡衣浴袍', noteEn: 'Not all hotels provide bathrobes or loungewear', trips: ['weekend', 'vacation', 'business'] },
+      { id: 'cloth-shoes', nameZh: '好走耐穿步行球鞋 / 健走鞋', nameEn: 'Walking Sneakers / Comfortable Shoes', category: 'clothing', baggage: 'on_person', packed: false, quantity: 1, noteZh: '不要穿全新未磨合的鞋子，以穿過舒服的舊鞋為佳', noteEn: 'Never wear un-broken-in brand new shoes on trips!', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'cloth-slippers', nameZh: '輕便拖鞋 / 涼鞋 / 室內拖鞋', nameEn: 'Slippers / Flip-Flops / Sandals', category: 'clothing', baggage: 'checked', packed: false, quantity: 1, noteZh: '歐美許多環保飯店不再提供一次性拖鞋', noteEn: 'Many eco-hotels in Europe & USA no longer provide slippers', trips: ['vacation', 'business'] },
+      { id: 'cloth-sunglasses-hat', nameZh: '抗 UV 太陽眼鏡與遮陽防曬帽', nameEn: 'Sunglasses & UV Sun Protection Hat', category: 'clothing', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '戶外拍照必備造型利器，並保護雙眼', noteEn: 'Protects eyesight and looks great in holiday photos', trips: ['vacation', 'outdoor'] },
+
+      // Toiletries & Personal Care
+      { id: 'toil-toothbrush', nameZh: '牙刷、牙膏與牙線隨身盒', nameEn: 'Toothbrush, Toothpaste & Dental Floss', category: 'toiletries', baggage: 'checked', packed: false, quantity: 1, noteZh: '全球各國飯店漸漸響應環保不提供一次性備品', noteEn: 'Hotels worldwide increasingly discontinue single-use sets', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'toil-skincare', nameZh: '洗面乳、化妝水與保濕精華乳霜', nameEn: 'Facial Cleanser, Toner & Moisturizer', category: 'toiletries', baggage: 'checked', packed: false, quantity: 1, noteZh: '機艙極度乾燥，高保濕乳液是換季乾癢救星', noteEn: 'High-hydration skincare combats dry aircraft air', trips: ['weekend', 'vacation', 'business'] },
+      { id: 'toil-sunscreen', nameZh: '臉部與身體高效防曬乳', nameEn: 'Facial & Body High-SPF Sunscreen', category: 'toiletries', baggage: 'checked', packed: false, quantity: 1, noteZh: '戶外旅行紫外線強烈，防曬兼具抗光老化', noteEn: 'Prevents sunburn and photoaging during outdoor visits', trips: ['vacation', 'outdoor'] },
+      { id: 'toil-lipbalm', nameZh: '滋潤護唇膏與護手霜', nameEn: 'Hydrating Lip Balm & Hand Cream', category: 'toiletries', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '登機隨身必備，隨時解救機上乾燥嘴唇脫皮', noteEn: 'In-flight essential to prevent chapped lips and hands', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'toil-shaver', nameZh: '刮鬍刀 / 修容器 / 美容小剪刀', nameEn: 'Razor / Electric Shaver / Tweezers', category: 'toiletries', baggage: 'checked', packed: false, quantity: 1, noteZh: '⚠️ 刀片式手動刮鬍刀或剪刀建議放託運避免安檢爭議', noteEn: 'Pack manual blades/scissors in checked bags for airport security', trips: ['weekend', 'vacation', 'business'] },
+      { id: 'toil-wipes', nameZh: '隨身濕紙巾、酒精棉片與小包面紙', nameEn: 'Wet Wipes, Sanitizing Wipes & Pocket Tissues', category: 'toiletries', baggage: 'carry_on', packed: false, quantity: 3, noteZh: '擦拭飛機餐桌椅把手與戶外野餐清潔超級實用', noteEn: 'Wipe down airplane tray tables and dining spots', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+
+      // Health & First Aid
+      { id: 'med-motion-sickness', nameZh: '暈車藥 / 暈船暈機藥', nameEn: 'Motion Sickness Pills', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '搭車、出海或起降前 30~60 分鐘提前服用才有效', noteEn: 'Take 30-60 mins prior to transport for maximum effect', trips: ['vacation', 'outdoor'] },
+      { id: 'med-painkiller', nameZh: '止痛退燒藥 (普拿疼 / 布洛芬)', nameEn: 'Painkillers & Fever Reducer (Acetaminophen / Ibuprofen)', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '緩解頭痛、肌肉酸痛、經痛與輕微發燒', noteEn: 'Relieves headache, sore muscles, cramps and mild fever', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'med-stomach', nameZh: '腸胃藥、止瀉藥與健胃整腸錠', nameEn: 'Stomach Medicine, Antacids & Anti-Diarrheal', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '出國品嚐異國美食或水土不服時的第一防線', noteEn: 'First defense against unfamiliar local street food and water', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'med-cold-allergy', nameZh: '綜合感冒藥與抗過敏鼻炎藥 (抗組織胺)', nameEn: 'Cold & Flu Medicine & Antihistamines', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '應對溫差流鼻水、打噴嚏或輕微咳嗽', noteEn: 'Relieves seasonal changes, sneezing and minor coughs', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'med-bandaid', nameZh: 'OK繃 (防水款) 與消毒紗布', nameEn: 'Band-Aids (Waterproof) & Antiseptic Pads', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '健走磨腳破皮或輕微擦傷時的貼心小救星', noteEn: 'Lifesaver for shoe blister rubbing and small scrapes', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'med-personal-rx', nameZh: '個人慢性病處方藥 (請攜帶英文處方籤/原裝藥袋)', nameEn: 'Personal Prescriptions (with Original Label/Rx)', category: 'health', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '⚠️ 必隨身放隨身包，切勿託運以防行李延誤或遺失！', noteEn: '⚠️ Always keep in carry-on bag in case luggage is delayed!', isCrucial: true, trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+
+      // Flight Comfort & Bags
+      { id: 'comf-neck-pillow', nameZh: '記憶棉旅行頸枕 (附固定扣環)', nameEn: 'Memory Foam Travel Neck Pillow', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '支撐頸椎，長途搭機不落枕補眠好物', noteEn: 'Provides neck support for sound sleep without stiff neck', trips: ['vacation', 'business'] },
+      { id: 'comf-eyemask-earplugs', nameZh: '3D 立體遮光眼罩與降噪隔音耳塞', nameEn: '3D Contoured Eye Mask & Soundproof Earplugs', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '杜絕機艙燈光與隔壁乘客打呼聲', noteEn: 'Blocks cabin light and engine hum completely', trips: ['vacation', 'business'] },
+      { id: 'comf-pen', nameZh: '填寫海關入境卡專用原子筆 (黑色/藍色)', nameEn: 'Ballpoint Pen (for Customs Arrival Cards)', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '在飛機上下降前發入境卡時直接填妥，下機快速通關', noteEn: 'Fill arrival forms onboard; zero waiting in airport lines', isCrucial: true, trips: ['vacation', 'business'] },
+      { id: 'comf-bottle', nameZh: '隨身輕量水壺 (空瓶過安檢後裝水)', nameEn: 'Reusable Water Bottle (Empty through Security)', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '過完安檢在登機門飲水機裝滿，機上隨時喝溫水', noteEn: 'Fill up after security checkpoint; eco-friendly and convenient', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'comf-luggage-scale', nameZh: '便攜式數位行李電子秤', nameEn: 'Portable Digital Luggage Scale', category: 'flight_comfort', baggage: 'checked', packed: false, quantity: 1, noteZh: '回程大採購戰利品前先秤重，避免在機場櫃檯手忙腳亂開箱', noteEn: 'Prevent hefty airline overweight fees when shopping abroad', trips: ['vacation', 'business'] },
+      { id: 'comf-lock-tag', nameZh: 'TSA 美國海關認證密碼鎖與醒目行李吊牌', nameEn: 'TSA Approved Lock & Distinctive Luggage Tag', category: 'flight_comfort', baggage: 'checked', packed: false, quantity: 1, noteZh: '轉盤辨識度提升，防止其他旅客不慎錯拿行李', noteEn: 'Easy luggage recognition on baggage claim carousel', trips: ['vacation', 'business'] },
+      { id: 'comf-umbrella', nameZh: '超輕量抗風折疊晴雨兩用傘', nameEn: 'Ultra-Light Compact Folding Umbrella', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '晴天遮陽防曬，突發陣雨從容優雅', noteEn: 'Sun protection in heat, dry shelter during sudden rain', trips: ['weekend', 'vacation', 'business', 'outdoor'] },
+      { id: 'comf-shopping-bag', nameZh: '可折疊收納大容量手提環保袋', nameEn: 'Foldable Large Capacity Eco Shopping Tote', category: 'flight_comfort', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '回程免稅店血拼或戰利品裝不下的緊急救星', noteEn: 'Emergency extra bag for duty-free goodies and souvenirs', trips: ['vacation', 'weekend'] },
+
+      // Seasonal & Special
+      { id: 'seas-heat-pack', nameZh: '隨身貼式 / 手持暖暖包', nameEn: 'Disposable Hand Warmers / Heat Packs', category: 'seasonal', baggage: 'checked', packed: false, quantity: 5, noteZh: '去雪國或低溫國家貼在後背與腳底，保暖效果極佳', noteEn: 'Essential warmth booster for winter and ski destinations', trips: ['vacation', 'outdoor'] },
+      { id: 'seas-thermal-underwear', nameZh: '極暖發熱衣與發熱衛生褲', nameEn: 'Thermal Base Layer (Heattech Tops & Bottoms)', category: 'seasonal', baggage: 'checked', packed: false, quantity: 2, noteZh: '洋蔥式穿法內層必備，輕薄透氣又聚熱', noteEn: 'Lightweight core insulation for winter trips', trips: ['vacation', 'outdoor'] },
+      { id: 'seas-swimwear', nameZh: '泳衣、泳褲、泳帽與防霧泳鏡', nameEn: 'Swimwear, Swim Cap & Anti-Fog Goggles', category: 'seasonal', baggage: 'checked', packed: false, quantity: 1, noteZh: '飯店無邊際泳池、海灘玩水或溫泉 Spa 放鬆', noteEn: 'For resort infinity pools, beaches and thermal hot springs', trips: ['vacation'] },
+      { id: 'seas-waterproof-case', nameZh: '手機掛繩防水袋 (水上活動專用)', nameEn: 'Waterproof Phone Pouch with Lanyard', category: 'seasonal', baggage: 'carry_on', packed: false, quantity: 1, noteZh: '浮潛、泛舟或水上樂園防浸水拍照神物', noteEn: 'Protects phone during snorkeling and water adventures', trips: ['vacation', 'outdoor'] },
+      { id: 'seas-tripod', nameZh: '輕便藍牙自拍棒與旅行折疊三腳架', nameEn: 'Bluetooth Selfie Stick & Compact Tripod', category: 'seasonal', baggage: 'checked', packed: false, quantity: 1, noteZh: '獨旅或全家福合照不求人，定格美好瞬間', noteEn: 'Capture solo or group memories without asking strangers', trips: ['vacation', 'weekend'] }
+    ];
+
+    const TRAVEL_QUOTES = [
+      { quoteZh: '旅行不是為了逃避生活，而是為了不讓生活溜走。打包好行囊，迎接下一個精彩風景！', quoteEn: 'We travel not to escape life, but for life not to escape us. Pack your joy and let the adventure begin!', emoji: '✈️' },
+      { quoteZh: '只留下腳印，只帶走回憶；收拾妥當，心靈就可以輕裝翱翔。', quoteEn: 'Take only memories, leave only footprints. Pack prepared, wander freely.', emoji: '🌸' },
+      { quoteZh: '世界是一本書，不旅行的人只讀了其中一頁。準備出發，翻開全新篇章！', quoteEn: 'The world is a book and those who do not travel read only one page.', emoji: '📖' },
+      { quoteZh: '放輕鬆！只要護照、手機、錢包與充電器帶好，剩下的美好都是驚喜！', quoteEn: 'Stay relaxed! As long as you have passport, phone, money & chargers, everything else is just an adventure!', emoji: '✨' },
+      { quoteZh: '生活需要一些儀式感，每一次打勾都是朝著遠方的微風邁進一步。', quoteEn: 'Every checkmark brings you one step closer to fresh breezes and distant horizons.', emoji: '🧳' },
+      { quoteZh: '最好的旅程，就是發現自己眼中的光芒依舊閃爍。祝你有個超棒的假期！', quoteEn: 'The best journey is the one that reminds you how vast and beautiful the world is.', emoji: '🌈' }
+    ];
+
+    const AIRPORT_TIPS = [
+      { titleZh: '🔋 行動電源絕對不可託運！', titleEn: '🔋 Power banks must be in CARRY-ON!', descZh: '所有行動電源、相機備用電池均必須放在隨身行李，嚴禁放託運。', descEn: 'Aviation regulations require all power banks to be kept in carry-on baggage only.' },
+      { titleZh: '💧 隨身液體需 ≤ 100ml 且裝透明袋', titleEn: '💧 Liquids ≤ 100ml in clear 1L bag', descZh: '單瓶容量不得超過 100ml，總量裝入 1 公升透明袋中；其餘請託運。', descEn: 'Containers must not exceed 100ml each and fit in one clear resealable plastic bag.' },
+      { titleZh: '🛂 護照效期務必確認 ≥ 6 個月', titleEn: '🛂 Passport Validity ≥ 6 Months', descZh: '多數國家與航空公司要求入境時護照剩餘效期需滿 6 個月，出發前檢查！', descEn: 'Most international destinations require at least 6 months remaining passport validity.' },
+      { titleZh: '✈️ 登機帶一支原子筆與空水壺', titleEn: '✈️ Carry a pen & empty water bottle', descZh: '機上填寫入境卡申報單不需借筆；過安檢後在候機室裝滿水超方便。', descEn: 'Fill arrival cards onboard; fill empty bottles at water fountains after security.' }
+    ];
+
+    // --- 2. SOUND EFFECTS (Web Audio API - No External Sound Files Needed) ---
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playCheck() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(659.25, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880.0, this.ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.25);
+        } catch(e){}
+      }
+      playUncheck() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(392.0, this.ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.15);
+        } catch(e){}
+      }
+      playTrophy() {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.09);
+            gain.gain.setValueAtTime(0, this.ctx.currentTime + idx * 0.09);
+            gain.gain.linearRampToValueAtTime(0.14, this.ctx.currentTime + idx * 0.09 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.09 + 0.4);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.09);
+            osc.stop(this.ctx.currentTime + idx * 0.09 + 0.45);
+          });
+        } catch(e){}
+      }
+    }
+    const sound = new SoundEngine();
+
+    // --- 3. STATE & STORAGE ---
+    const STORAGE_KEY = 'packjoy_pure_html_items_v1';
+    let appState = {
+      items: [],
+      langMode: localStorage.getItem('packjoy_lang') || 'dual',
+      soundEnabled: localStorage.getItem('packjoy_sound') !== 'false',
+      destination: localStorage.getItem('packjoy_dest') || '',
+      departureDate: localStorage.getItem('packjoy_date') || '',
+      searchQuery: '',
+      selectedCategory: 'all',
+      selectedBaggage: 'all',
+      statusFilter: 'all',
+      selectedTripType: 'all',
+      quoteIndex: 0
+    };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          appState.items = JSON.parse(saved);
+        } else {
+          appState.items = [...DEFAULT_ITEMS];
+        }
+      } catch(e) {
+        appState.items = [...DEFAULT_ITEMS];
+      }
+      sound.enabled = appState.soundEnabled;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.items));
+        localStorage.setItem('packjoy_lang', appState.langMode);
+        localStorage.setItem('packjoy_sound', appState.soundEnabled);
+        localStorage.setItem('packjoy_dest', appState.destination);
+        localStorage.setItem('packjoy_date', appState.departureDate);
+      } catch(e){}
+    }
+
+    // --- 4. CONFETTI ANIMATION (Pure Canvas Fallback, 100% Offline) ---
+    function fireConfetti(type = 'milestone') {
+      const canvas = document.getElementById('confettiCanvas');
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const colors = ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#ef4444'];
+      const particles = [];
+      const particleCount = type === 'all-done' ? 120 : 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height * 0.4 + (Math.random() - 0.5) * 100,
+          vx: (Math.random() - 0.5) * 16,
+          vy: Math.random() * -12 - 4,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        frames++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = 0;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // Gravity
+          p.rotation += p.rotSpeed;
+          p.opacity -= 0.012;
+
+          if (p.opacity > 0) {
+            alive++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+          }
+        });
+
+        if (alive > 0 && frames < 180) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.style.display = 'none';
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // --- 5. RENDER FUNCTIONS ---
+
+    function renderAll() {
+      renderNavbar();
+      renderMoodHeader();
+      renderFilterBar();
+      renderChecklist();
+      renderQuickTips();
+      renderPrintHeader();
+    }
+
+    function renderNavbar() {
+      // Language buttons
+      const btnDual = document.getElementById('btnLangDual');
+      const btnZh = document.getElementById('btnLangZh');
+      const btnEn = document.getElementById('btnLangEn');
+
+      [btnDual, btnZh, btnEn].forEach(btn => {
+        btn.className = "px-2.5 py-1.5 rounded-lg transition-all text-slate-600 hover:text-slate-900";
+      });
+
+      if (appState.langMode === 'dual') {
+        btnDual.className = "px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1 bg-white text-slate-900 font-semibold shadow-xs";
+      } else if (appState.langMode === 'zh') {
+        btnZh.className = "px-2.5 py-1.5 rounded-lg transition-all bg-white text-slate-900 font-semibold shadow-xs";
+      } else {
+        btnEn.className = "px-2.5 py-1.5 rounded-lg transition-all bg-white text-slate-900 font-semibold shadow-xs";
+      }
+
+      // Sound button
+      const btnSound = document.getElementById('btnToggleSound');
+      const wrapper = document.getElementById('soundIconWrapper');
+      if (appState.soundEnabled) {
+        btnSound.className = "p-2 rounded-xl border bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100 transition-colors";
+        wrapper.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+      } else {
+        btnSound.className = "p-2 rounded-xl border bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-600 transition-colors";
+        wrapper.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>';
+      }
+    }
+
+    function renderMoodHeader() {
+      const container = document.getElementById('moodHeaderContainer');
+      const totalItems = appState.items.length;
+      const packedItems = appState.items.filter(i => i.packed).length;
+      const percent = totalItems > 0 ? Math.round((packedItems / totalItems) * 100) : 0;
+
+      const carryOnPacked = appState.items.filter(i => i.baggage === 'carry_on' && i.packed).length;
+      const carryOnTotal = appState.items.filter(i => i.baggage === 'carry_on').length;
+      const checkedPacked = appState.items.filter(i => i.baggage === 'checked' && i.packed).length;
+      const checkedTotal = appState.items.filter(i => i.baggage === 'checked').length;
+
+      // Days left
+      let daysBadge = '';
+      if (appState.departureDate) {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const target = new Date(appState.departureDate); target.setHours(0,0,0,0);
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+        if (diffDays > 0) {
+          daysBadge = `<span class="px-3 py-1.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-2xs inline-flex items-center gap-1">
+            <span>✈️ 倒數</span><span class="text-sm underline decoration-white/40">${diffDays}</span><span>天！</span>
+          </span>`;
+        } else if (diffDays === 0) {
+          daysBadge = `<span class="px-3 py-1.5 rounded-2xl text-xs font-bold bg-rose-500 text-white shadow-2xs animate-bounce">🎉 今天出發！Today is the day!</span>`;
+        }
+      }
+
+      // Mood quote
+      const quote = TRAVEL_QUOTES[appState.quoteIndex];
+      const quoteText = appState.langMode === 'en' ? quote.quoteEn : quote.quoteZh;
+      const quoteSub = appState.langMode === 'dual' ? `<p class="text-[11px] text-slate-500 italic mt-0.5">${quote.quoteEn}</p>` : '';
+
+      // Progress status text
+      let statusText = '收拾行囊是冒險的第一步，保持好心情！💖';
+      let statusClass = 'text-slate-700 bg-white/80 border-slate-200';
+      if (percent === 100) {
+        statusText = '太完美了！全部裝齊，隨時準備起飛！🛫🎉';
+        statusClass = 'text-emerald-700 bg-emerald-100/90 border-emerald-300';
+      } else if (percent >= 75) {
+        statusText = '行李快要大功告成囉！離出發更近一步 ✨';
+        statusClass = 'text-amber-800 bg-amber-100/90 border-amber-300';
+      } else if (percent >= 50) {
+        statusText = '進度過半！放首音樂，心情愉悅打包中 🎶';
+        statusClass = 'text-sky-800 bg-sky-100/90 border-sky-300';
+      } else if (percent >= 25) {
+        statusText = '踏出好的開始！一項項打勾最踏實 🌸';
+        statusClass = 'text-indigo-800 bg-indigo-100/90 border-indigo-300';
+      }
+
+      container.innerHTML = `
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-400/10 to-rose-400/10 border border-amber-200/60 p-6 sm:p-8 shadow-sm">
+          <div class="relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8 items-start lg:items-center justify-between">
+            <div class="flex-1 space-y-4">
+              <div class="flex flex-wrap items-center gap-2.5">
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-amber-200 shadow-2xs text-xs font-medium focus-within:ring-2 focus-within:ring-amber-400">
+                  <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+                  <input type="text" id="destInput" value="${escapeHtml(appState.destination)}" onchange="updateDest(this.value)" placeholder="${appState.langMode === 'en' ? 'Destination (e.g. Tokyo)' : '目的地 (例如：東京、巴黎)'}" class="bg-transparent border-none outline-none text-slate-800 font-semibold w-28 sm:w-36 placeholder:text-slate-400">
+                </div>
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/90 border border-amber-200 shadow-2xs text-xs font-medium focus-within:ring-2 focus-within:ring-amber-400">
+                  <svg class="w-3.5 h-3.5 text-orange-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                  <input type="date" id="dateInput" value="${appState.departureDate}" onchange="updateDate(this.value)" class="bg-transparent border-none outline-none text-slate-800 font-semibold cursor-pointer text-xs">
+                </div>
+                ${daysBadge}
+              </div>
+              <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                  <span>整理行囊，滿載期待出發！</span>
+                  <span class="floating-plane">✈️</span>
+                </h1>
+                <p class="text-sm font-medium text-slate-600 mt-1">Ready for your journey. Pack smart, pack light, and keep smiling!</p>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/80 border border-amber-100 shadow-2xs text-xs flex items-center justify-between gap-3">
+                <div class="flex items-start gap-2.5">
+                  <span class="text-xl shrink-0">${quote.emoji}</span>
+                  <div>
+                    <p class="font-semibold text-slate-800 leading-snug">${quoteText}</p>
+                    ${quoteSub}
+                  </div>
+                </div>
+                <button onclick="nextQuote()" class="p-1.5 rounded-xl text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors shrink-0" title="換句好心情小語">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="w-full lg:w-80 bg-white/95 rounded-2xl p-5 border border-slate-200/90 shadow-sm flex flex-col justify-between gap-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 20h0a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2"/><path d="M9 18V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v12"/><circle cx="8" cy="20" r="1"/><circle cx="16" cy="20" r="1"/></svg>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold text-slate-800">打包總進度</span>
+                    <span class="text-[10px] text-slate-400 block -mt-0.5">Packing Progress</span>
+                  </div>
+                </div>
+                <span class="text-2xl font-black text-amber-600 tracking-tight">${percent}%</span>
+              </div>
+              <div>
+                <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden p-0.5 border border-slate-200/60">
+                  <div class="h-full rounded-full transition-all duration-500 ease-out ${percent === 100 ? 'bg-gradient-to-r from-emerald-400 to-teal-500' : 'bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400'}" style="width: ${percent}%"></div>
+                </div>
+                <div class="flex justify-between items-center text-[11px] font-medium text-slate-500 mt-2">
+                  <span>已打包 <strong class="text-slate-800 font-bold">${packedItems}</strong> / ${totalItems} 件</span>
+                  <span>剩餘 <strong class="text-amber-600 font-bold">${totalItems - packedItems}</strong> 件待收</span>
+                </div>
+              </div>
+              <div class="px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 ${statusClass}">
+                <span class="mr-1">😊</span>
+                <span class="leading-tight truncate">${statusText}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100 text-[11px]">
+                <div class="bg-sky-50/70 text-sky-800 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+                  <span class="font-medium">🎒 隨身登機</span>
+                  <span class="font-bold">${carryOnPacked}/${carryOnTotal}</span>
+                </div>
+                <div class="bg-amber-50/70 text-amber-800 px-2.5 py-1.5 rounded-lg flex items-center justify-between">
+                  <span class="font-medium">🧳 託運行李</span>
+                  <span class="font-bold">${checkedPacked}/${checkedTotal}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFilterBar() {
+      const container = document.getElementById('filterBarContainer');
+
+      // Trip presets buttons
+      const tripPresets = [
+        { id: 'all', zh: '全部必備', en: 'All Essentials' },
+        { id: 'vacation', zh: '海外度假', en: 'Vacation' },
+        { id: 'business', zh: '商務出差', en: 'Business' },
+        { id: 'weekend', zh: '週末輕旅行', en: 'Weekend Trip' }
+      ];
+
+      const tripButtonsHtml = tripPresets.map(p => {
+        const isSel = appState.selectedTripType === p.id;
+        const cls = isSel ? 'bg-amber-500 border-amber-600 text-white shadow-2xs' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50';
+        const label = appState.langMode === 'en' ? p.en : p.zh;
+        return `<button onclick="setTripType('${p.id}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${cls}">
+          <span>${label}</span>
+        </button>`;
+      }).join('');
+
+      // Category pills
+      const allCountPacked = appState.items.filter(i => i.packed).length;
+      const allPillCls = appState.selectedCategory === 'all' ? 'bg-slate-900 border-slate-900 text-white shadow-xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50';
+      
+      let catPillsHtml = `
+        <button onclick="setCategory('all')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all border ${allPillCls}">
+          <span>✨ 全部類別 (All)</span>
+          <span class="px-1.5 py-0.2 rounded-full text-[10px] ${appState.selectedCategory === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600'}">${allCountPacked}/${appState.items.length}</span>
+        </button>
+      `;
+
+      catPillsHtml += CATEGORIES.map(cat => {
+        const catItems = appState.items.filter(i => i.category === cat.id);
+        const packed = catItems.filter(i => i.packed).length;
+        const total = catItems.length;
+        const isAllDone = total > 0 && packed === total;
+        const isSel = appState.selectedCategory === cat.id;
+        const cls = isSel ? 'bg-amber-500 border-amber-600 text-white shadow-xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50';
+        const badgeCls = isSel ? 'bg-amber-600 text-white' : isAllDone ? 'bg-emerald-100 text-emerald-800 font-extrabold' : 'bg-slate-100 text-slate-600';
+        const label = appState.langMode === 'en' ? cat.nameEn : cat.nameZh;
+        return `
+          <button onclick="setCategory('${cat.id}')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all border ${cls}">
+            <span>${label}</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] ${badgeCls}">${isAllDone ? '✓ ' : ''}${packed}/${total}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Baggage Subfilters
+      const bagAllCls = appState.selectedBaggage === 'all' ? 'bg-slate-200 text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-800';
+      const bagCarryCls = appState.selectedBaggage === 'carry_on' ? 'bg-sky-100 text-sky-800 font-bold border border-sky-200' : 'text-slate-500 hover:text-slate-800';
+      const bagCheckCls = appState.selectedBaggage === 'checked' ? 'bg-amber-100 text-amber-800 font-bold border border-amber-200' : 'text-slate-500 hover:text-slate-800';
+      const bagPersonCls = appState.selectedBaggage === 'on_person' ? 'bg-purple-100 text-purple-800 font-bold border border-purple-200' : 'text-slate-500 hover:text-slate-800';
+
+      // Status Subfilters
+      const statAllCls = appState.statusFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900';
+      const statUnpackedCls = appState.statusFilter === 'unpacked' ? 'bg-amber-500 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900';
+      const statPackedCls = appState.statusFilter === 'packed' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900';
+
+      const unpackedCount = appState.items.filter(i => !i.packed).length;
+      const packedCount = appState.items.filter(i => i.packed).length;
+
+      container.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+          <div class="relative flex-1 max-w-lg">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" value="${escapeHtml(appState.searchQuery)}" oninput="handleSearch(this.value)" placeholder="${appState.langMode === 'en' ? 'Search items (e.g. iPhone, charger, passport)...' : '搜尋物品（例如：iPhone、充電線、護照、藥品）...'}" class="w-full pl-10 pr-9 py-2.5 bg-white rounded-2xl border border-slate-200 text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-400 shadow-2xs font-medium">
+            ${appState.searchQuery ? `<button onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>` : ''}
+          </div>
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 custom-scroll">
+            <span class="text-xs font-semibold text-slate-400 shrink-0 mr-1 hidden lg:inline">行程模式：</span>
+            ${tripButtonsHtml}
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scroll">
+          ${catPillsHtml}
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-200/60 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-semibold mr-1 flex items-center gap-1">行李分流:</span>
+            <button onclick="setBaggage('all')" class="px-2.5 py-1 rounded-lg font-medium transition-colors ${bagAllCls}">全部</button>
+            <button onclick="setBaggage('carry_on')" class="px-2.5 py-1 rounded-lg font-medium transition-colors ${bagCarryCls}">🎒 隨身登機</button>
+            <button onclick="setBaggage('checked')" class="px-2.5 py-1 rounded-lg font-medium transition-colors ${bagCheckCls}">🧳 託運行李</button>
+            <button onclick="setBaggage('on_person')" class="px-2.5 py-1 rounded-lg font-medium transition-colors ${bagPersonCls}">👜 身上小物</button>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400 font-semibold mr-1">狀態:</span>
+            <div class="inline-flex rounded-xl bg-slate-100 p-0.5 border border-slate-200/80">
+              <button onclick="setStatus('all')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${statAllCls}">全部</button>
+              <button onclick="setStatus('unpacked')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${statUnpackedCls}">待收拾 (${unpackedCount})</button>
+              <button onclick="setStatus('packed')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${statPackedCls}">已打包 (${packedCount})</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById('checklistContainer');
+
+      // Filter items
+      const q = appState.searchQuery.trim().toLowerCase();
+      const filtered = appState.items.filter(item => {
+        if (q) {
+          const mZh = item.nameZh.toLowerCase().includes(q);
+          const mEn = item.nameEn.toLowerCase().includes(q);
+          const mN1 = item.noteZh ? item.noteZh.toLowerCase().includes(q) : false;
+          const mN2 = item.noteEn ? item.noteEn.toLowerCase().includes(q) : false;
+          if (!mZh && !mEn && !mN1 && !mN2) return false;
+        }
+        if (appState.selectedCategory !== 'all' && item.category !== appState.selectedCategory) return false;
+        if (appState.selectedBaggage !== 'all' && item.baggage !== appState.selectedBaggage) return false;
+        if (appState.statusFilter === 'unpacked' && item.packed) return false;
+        if (appState.statusFilter === 'packed' && !item.packed) return false;
+        if (appState.selectedTripType !== 'all') {
+          if (!item.trips || !item.trips.includes(appState.selectedTripType)) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 px-4 bg-white rounded-3xl border border-slate-200 shadow-2xs">
+            <div class="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mx-auto text-amber-500 mb-4 text-2xl">🔍</div>
+            <h3 class="text-base font-bold text-slate-800">找不到相符的物品 (No matching items)</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">請試著調整搜尋字詞或分類，或點擊上方「新增項目」自訂！</p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 transition-colors">清除所有篩選條件</button>
+          </div>
+        `;
+        return;
+      }
+
+      // Group by Category
+      let sectionsHtml = '';
+      CATEGORIES.forEach(category => {
+        const catItems = filtered.filter(i => i.category === category.id);
+        if (catItems.length === 0) return;
+
+        const totalCat = catItems.length;
+        const packedCat = catItems.filter(i => i.packed).length;
+        const isAllDone = totalCat > 0 && packedCat === totalCat;
+
+        // Cards inside category
+        const cardsHtml = catItems.map(item => renderItemCard(item)).join('');
+
+        const catTitle = appState.langMode === 'en' ? category.nameEn : category.nameZh;
+        const catSub = appState.langMode === 'dual' ? `<span class="text-amber-700/80 mr-1.5 font-semibold">${category.nameEn} •</span>` : '';
+        const catDesc = appState.langMode === 'en' ? category.descriptionEn : category.descriptionZh;
+
+        sectionsHtml += `
+          <section class="rounded-3xl bg-white border border-slate-200/90 p-5 sm:p-6 shadow-xs print-break-inside-avoid">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl ${category.bgLight} border ${category.borderLight} flex items-center justify-center shrink-0">
+                  <span class="text-lg">📦</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">${catTitle}</h2>
+                    ${isAllDone ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">✓ 已全數打包</span>` : ''}
+                  </div>
+                  <p class="text-xs text-slate-500 font-medium mt-0.5">${catSub}<span>${catDesc}</span></p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 self-end sm:self-center no-print">
+                <span class="px-2.5 py-1 rounded-xl text-xs font-bold border ${isAllDone ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-600'}">
+                  ${packedCat} / ${totalCat} 完成
+                </span>
+                <button onclick="toggleCategoryAll('${category.id}', ${!isAllDone})" class="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors">
+                  <span>${isAllDone ? '重置分類' : '全選分類'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${cardsHtml}
+            </div>
+          </section>
+        `;
+      });
+
+      container.innerHTML = sectionsHtml;
+    }
+
+    function renderItemCard(item) {
+      // Baggage badge
+      let bagLabelZh = '🎒 隨身登機', bagLabelEn = 'Carry-on', bagBg = 'bg-sky-50 text-sky-700 border-sky-200';
+      if (item.baggage === 'checked') {
+        bagLabelZh = '🧳 託運行李'; bagLabelEn = 'Checked'; bagBg = 'bg-amber-50 text-amber-700 border-amber-200';
+      } else if (item.baggage === 'on_person') {
+        bagLabelZh = '👜 身上小物'; bagLabelEn = 'On Person'; bagBg = 'bg-purple-50 text-purple-700 border-purple-200';
+      }
+
+      // Titles based on languageMode
+      let titleHtml = '';
+      if (appState.langMode === 'en') {
+        titleHtml = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm sm:text-base leading-snug ${item.packed ? 'text-slate-400 line-through' : 'text-slate-800'}">${escapeHtml(item.nameEn)}</span>
+              ${item.isCrucial ? '<span class="px-1.5 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-600 text-[10px] font-bold shrink-0">★ Must</span>' : ''}
+            </div>
+            <span class="text-xs block mt-0.5 ${item.packed ? 'text-slate-400' : 'text-slate-500'}">${escapeHtml(item.nameZh)}</span>
+          </div>
+        `;
+      } else if (appState.langMode === 'zh') {
+        titleHtml = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm sm:text-base leading-snug ${item.packed ? 'text-slate-400 line-through' : 'text-slate-800'}">${escapeHtml(item.nameZh)}</span>
+              ${item.isCrucial ? '<span class="px-1.5 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-600 text-[10px] font-bold shrink-0">★ 必備</span>' : ''}
+            </div>
+            <span class="text-xs block mt-0.5 ${item.packed ? 'text-slate-400' : 'text-slate-500'}">${escapeHtml(item.nameEn)}</span>
+          </div>
+        `;
+      } else {
+        // Dual
+        titleHtml = `
+          <div>
+            <div class="flex items-center flex-wrap gap-1.5 sm:gap-2">
+              <span class="font-bold text-sm sm:text-base leading-snug ${item.packed ? 'text-slate-400 line-through' : 'text-slate-900'}">${escapeHtml(item.nameZh)}</span>
+              ${item.isCrucial ? '<span class="px-1.5 py-0.5 rounded-md bg-rose-100/80 border border-rose-200 text-rose-700 text-[10px] font-bold shrink-0">★ 必備 Crucial</span>' : ''}
+            </div>
+            <div class="text-xs font-medium block mt-0.5 tracking-tight ${item.packed ? 'text-slate-400 line-through' : 'text-amber-700/90'}">${escapeHtml(item.nameEn)}</div>
+          </div>
+        `;
+      }
+
+      const note = appState.langMode === 'en' ? (item.noteEn || item.noteZh) : (item.noteZh || item.noteEn);
+
+      return `
+        <div class="group relative rounded-2xl border transition-all duration-200 p-3.5 sm:p-4 flex flex-col justify-between gap-3 ${item.packed ? 'bg-slate-50/70 border-slate-200/60 opacity-75' : 'bg-white border-slate-200 hover:border-amber-300 hover:shadow-xs shadow-2xs'}">
+          <div class="flex items-start gap-3 justify-between">
+            <div onclick="toggleItem('${item.id}')" class="flex items-start gap-3 flex-1 cursor-pointer select-none">
+              <div class="w-6 h-6 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${item.packed ? 'bg-emerald-500 border-emerald-500 text-white scale-105' : 'border-slate-300 bg-slate-50 group-hover:border-amber-400'}">
+                ${item.packed ? '<svg class="w-4 h-4 stroke-[3]" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+              </div>
+              ${titleHtml}
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0 no-print">
+              <div class="flex items-center rounded-xl bg-slate-100 border border-slate-200/80 p-0.5 text-xs font-semibold">
+                <button onclick="changeQty('${item.id}', -1)" ${item.quantity <= 1 ? 'disabled' : ''} class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-800 disabled:opacity-30 rounded-lg hover:bg-white" title="減少數量"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" x2="19" y1="12" y2="12"/></svg></button>
+                <span class="w-6 text-center text-slate-700 font-bold text-xs">${item.quantity}</span>
+                <button onclick="changeQty('${item.id}', 1)" class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-lg hover:bg-white" title="增加數量"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+              </div>
+              ${item.isCustom ? `<button onclick="deleteItem('${item.id}')" class="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="刪除自訂項目"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>` : ''}
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+            <button onclick="cycleBaggage('${item.id}')" class="px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-colors flex items-center gap-1 cursor-pointer ${bagBg}" title="點擊切換行李放置位置">
+              <span>${bagLabelZh}</span>
+              <span class="text-[10px] opacity-75">(${bagLabelEn})</span>
+            </button>
+            ${note ? `<div class="flex items-center gap-1 text-[11px] text-slate-500 bg-slate-50/90 px-2 py-0.5 rounded-md border border-slate-200/50 max-w-full truncate">
+              <svg class="w-3 h-3 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span class="truncate">${escapeHtml(note)}</span>
+            </div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuickTips() {
+      const grid = document.getElementById('quickTipsGrid');
+      grid.innerHTML = AIRPORT_TIPS.map(tip => `
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:bg-sky-50/50 transition-colors">
+          <h4 class="font-bold text-slate-900 mb-1 leading-snug">${appState.langMode === 'en' ? tip.titleEn : tip.titleZh}</h4>
+          <p class="text-slate-600 text-[11px] leading-relaxed">${appState.langMode === 'en' ? tip.descEn : tip.descZh}</p>
+        </div>
+      `).join('');
+    }
+
+    function renderPrintHeader() {
+      const pDest = document.getElementById('printDestInfo');
+      const pDate = document.getElementById('printDateInfo');
+      const pProg = document.getElementById('printProgressInfo');
+      if (pDest) pDest.innerText = `目的地: ${appState.destination || '未指定'}`;
+      if (pDate) pDate.innerText = `出發日: ${appState.departureDate || '未指定'}`;
+      if (pProg) {
+        const pk = appState.items.filter(i => i.packed).length;
+        pProg.innerText = `進度: ${pk} / ${appState.items.length} 件已完成`;
+      }
+    }
+
+    // --- 6. USER ACTION HANDLERS ---
+    function toggleItem(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+
+      item.packed = !item.packed;
+      if (item.packed) {
+        sound.playCheck();
+      } else {
+        sound.playUncheck();
+      }
+
+      saveState();
+
+      // Check milestones
+      const total = appState.items.length;
+      const packed = appState.items.filter(i => i.packed).length;
+      const celebrationBanner = document.getElementById('celebrationBanner');
+
+      if (packed === total && total > 0) {
+        celebrationBanner.classList.remove('hidden');
+        sound.playTrophy();
+        fireConfetti('all-done');
+      } else {
+        celebrationBanner.classList.add('hidden');
+        if (item.packed && (packed === Math.floor(total * 0.5) || packed === Math.floor(total * 0.75))) {
+          fireConfetti('milestone');
+        }
+      }
+
+      renderAll();
+    }
+
+    function changeQty(id, delta) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+      item.quantity = Math.max(1, item.quantity + delta);
+      saveState();
+      renderAll();
+    }
+
+    function cycleBaggage(id) {
+      const item = appState.items.find(i => i.id === id);
+      if (!item) return;
+      const order = ['carry_on', 'checked', 'on_person'];
+      const nextIdx = (order.indexOf(item.baggage) + 1) % order.length;
+      item.baggage = order[nextIdx];
+      saveState();
+      renderAll();
+    }
+
+    function deleteItem(id) {
+      appState.items = appState.items.filter(i => i.id !== id);
+      saveState();
+      renderAll();
+    }
+
+    function toggleCategoryAll(catId, targetPacked) {
+      appState.items.forEach(i => {
+        if (i.category === catId) i.packed = targetPacked;
+      });
+      if (targetPacked) {
+        sound.playCheck();
+        const total = appState.items.length;
+        const packed = appState.items.filter(i => i.packed).length;
+        if (packed === total) {
+          document.getElementById('celebrationBanner').classList.remove('hidden');
+          sound.playTrophy();
+          fireConfetti('all-done');
+        }
+      } else {
+        sound.playUncheck();
+      }
+      saveState();
+      renderAll();
+    }
+
+    function setLanguageMode(mode) {
+      appState.langMode = mode;
+      saveState();
+      renderAll();
+    }
+
+    function toggleSound() {
+      appState.soundEnabled = !appState.soundEnabled;
+      sound.enabled = appState.soundEnabled;
+      saveState();
+      renderNavbar();
+    }
+
+    function setTripType(type) {
+      appState.selectedTripType = type;
+      renderAll();
+    }
+
+    function setCategory(catId) {
+      appState.selectedCategory = catId;
+      renderAll();
+    }
+
+    function setBaggage(bag) {
+      appState.selectedBaggage = bag;
+      renderAll();
+    }
+
+    function setStatus(st) {
+      appState.statusFilter = st;
+      renderAll();
+    }
+
+    function handleSearch(val) {
+      appState.searchQuery = val;
+      renderFilterBar();
+      renderChecklist();
+    }
+
+    function clearSearch() {
+      appState.searchQuery = '';
+      renderAll();
+    }
+
+    function resetFilters() {
+      appState.searchQuery = '';
+      appState.selectedCategory = 'all';
+      appState.selectedBaggage = 'all';
+      appState.statusFilter = 'all';
+      appState.selectedTripType = 'all';
+      renderAll();
+    }
+
+    function updateDest(val) {
+      appState.destination = val;
+      saveState();
+      renderMoodHeader();
+      renderPrintHeader();
+    }
+
+    function updateDate(val) {
+      appState.departureDate = val;
+      saveState();
+      renderMoodHeader();
+      renderPrintHeader();
+    }
+
+    function nextQuote() {
+      appState.quoteIndex = (appState.quoteIndex + 1) % TRAVEL_QUOTES.length;
+      renderMoodHeader();
+    }
+
+    function resetChecklist() {
+      if (confirm('確定要將所有項目的打包狀態重置為「待收拾」嗎？（您的自訂項目將被保留）')) {
+        appState.items.forEach(i => i.packed = false);
+        document.getElementById('celebrationBanner').classList.add('hidden');
+        sound.playUncheck();
+        saveState();
+        renderAll();
+      }
+    }
+
+    function restoreDefaults() {
+      if (confirm('確定要還原為系統預設清單嗎？（現有的自訂項目將被重置）')) {
+        appState.items = [...DEFAULT_ITEMS];
+        document.getElementById('celebrationBanner').classList.add('hidden');
+        saveState();
+        renderAll();
+      }
+    }
+
+    // --- 7. MODALS ---
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      if (modalId === 'shareModal') {
+        generateShareText();
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function handleFormAddItem(e) {
+      e.preventDefault();
+      const nameZh = document.getElementById('inputItemZh').value.trim();
+      const nameEn = document.getElementById('inputItemEn').value.trim();
+      const category = document.getElementById('selectItemCat').value;
+      const baggage = document.getElementById('selectItemBag').value;
+      const quantity = parseInt(document.getElementById('inputItemQty').value) || 1;
+      const isCrucial = document.getElementById('checkItemCrucial').checked;
+      const note = document.getElementById('inputItemNote').value.trim();
+
+      const newItem = {
+        id: 'custom-' + Date.now(),
+        nameZh: nameZh || nameEn,
+        nameEn: nameEn || nameZh,
+        category,
+        baggage,
+        quantity,
+        packed: false,
+        isCrucial,
+        isCustom: true,
+        noteZh: note || undefined,
+        noteEn: note || undefined,
+        trips: ['weekend', 'vacation', 'business', 'outdoor']
+      };
+
+      appState.items.unshift(newItem);
+      saveState();
+      sound.playCheck();
+      closeModal('addItemModal');
+
+      // Reset form
+      document.getElementById('inputItemZh').value = '';
+      document.getElementById('inputItemEn').value = '';
+      document.getElementById('inputItemNote').value = '';
+      document.getElementById('checkItemCrucial').checked = false;
+      document.getElementById('inputItemQty').value = '1';
+
+      renderAll();
+    }
+
+    function generateShareText() {
+      let txt = `✈️ PackJoy 旅程無憂出發清單 ${appState.destination ? `(${appState.destination})` : ''}\n`;
+      txt += `整理時間: ${new Date().toLocaleDateString()}\n`;
+      const pk = appState.items.filter(i => i.packed).length;
+      txt += `打包進度: ${pk}/${appState.items.length} 件已完成\n\n`;
+
+      CATEGORIES.forEach(cat => {
+        const catItems = appState.items.filter(i => i.category === cat.id);
+        if (catItems.length > 0) {
+          txt += `【${cat.nameZh} / ${cat.nameEn}】\n`;
+          catItems.forEach(item => {
+            const mark = item.packed ? '✅' : '⬜';
+            const qty = item.quantity > 1 ? ` x${item.quantity}` : '';
+            txt += `${mark} ${item.nameZh} (${item.nameEn})${qty}\n`;
+          });
+          txt += '\n';
+        }
+      });
+      txt += `祝旅途愉快平安！Have a fantastic trip! 🌸✨`;
+      document.getElementById('textChecklistSummary').value = txt;
+    }
+
+    async function copyChecklistText() {
+      const text = document.getElementById('textChecklistSummary').value;
+      try {
+        await navigator.clipboard.writeText(text);
+        const lbl = document.getElementById('copyBtnLabel');
+        lbl.innerText = '已複製！';
+        setTimeout(() => { lbl.innerText = '一鍵複製'; }, 2500);
+      } catch(err) {
+        alert('請手動選取文字複製');
+      }
+    }
+
+    function exportJsonFile() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState.items, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `packjoy_travel_backup_${Date.now()}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function importJsonFile() {
+      const val = document.getElementById('inputImportJson').value.trim();
+      try {
+        const parsed = JSON.parse(val);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].id) {
+          appState.items = parsed;
+          saveState();
+          alert('匯入成功！清單已更新。');
+          closeModal('shareModal');
+          renderAll();
+        } else {
+          alert('格式不符，請確認是否為 PackJoy 備份資料。');
+        }
+      } catch(e) {
+        alert('JSON 解析錯誤，請檢查文字內容。');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    // Close modals on background click
+    window.addEventListener('click', function(e) {
+      ['addItemModal', 'airportRulesModal', 'shareModal'].forEach(mId => {
+        const m = document.getElementById(mId);
+        if (m && e.target === m) {
+          closeModal(mId);
+        }
+      });
+    });
+
+    // --- INITIALIZE ---
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderAll();
+    });
+  </script>
+</body>
+</html>
